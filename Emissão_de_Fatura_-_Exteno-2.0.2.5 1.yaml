@@ -1,0 +1,497 @@
+swagger: '2.0'
+info:
+  title: Emissão de Fatura - Exteno
+  x-ibm-name: emissao-de-fatura-externo
+  version: 2.0.2.5
+  description: A API de emissão de fatura fornece serviços para disponibilizar fatura, boleto, codigo de barras e linha digitavél para pagamento.
+  contact:
+    name: Equipe Siccob
+    url: http://www.sicoob.com.br
+    email: capes@sicoob.com.br
+schemes:
+  - https
+basePath: /sicoob/parceiros/invoice-issuing/v2
+security:
+  - oauth-mtls-rhsso:
+      - default
+    client_id: []
+securityDefinitions:
+  oauth-mtls-rhsso:
+    type: oauth2
+    flow: application
+    x-ibm-oauth-provider: oauth-mtls-rhsso
+    tokenUrl: https://auth-hom.homologacao.com.br/auth/realms/externo/protocol/openid-connect/token
+    scopes:
+      default: default
+  client_id:
+    type: apiKey
+    name: client_id
+    in: header
+    x-key-type: client_id
+x-ibm-configuration:
+  type: rest
+  phase: realized
+  enforced: true
+  testable: true
+  application-authentication:
+    certificate: false
+  cors:
+    enabled: true
+  servers:
+    - url: https://apicv10-homol.homologacao.com.br/sicoob/parceiros/invoice-issuing/v2
+      description: ''
+      type:
+        - production
+        - development
+  oauth-servers:
+    oauth-mtls-rhsso:
+      tokenUrls:
+        - https://auth-hom.homologacao.com.br/auth/realms/externo/protocol/openid-connect/token
+      authorizationUrls: []
+      refreshUrls: []
+definitions:
+  Componente:
+    type: object
+    properties:
+      appOrigem:
+        type: integer
+        description: |-
+          Origem da requisição.
+
+          CAMPO OBRIGATÓRIO;
+          int(1);
+        example: 1
+      idUsuario:
+        type: string
+        description: |-
+          Id Componente do portador.
+
+          CAMPO OBRIGATÓRIO;
+        example: '75620200930123048590001'
+      tipoConta:
+        type: integer
+        format: int32
+        description: |-
+          Tipo de conta:
+          -  0 - Indefinido;
+          -  1 - Crédito;
+          -  3 - Multiplo;
+            
+          CAMPO OBRIGATÓRIO;
+          int(1)
+        example: 1
+      vencimento:
+        type: string
+        description: |-
+          Data de vencimento da fatura.
+
+          CAMPO OPCIONAL;
+          Long(12);
+        example: 19/07/2022
+      timeout:
+        type: integer
+        format: int32
+        description: |-
+          Tempo maximo de resposta do serviço.
+
+          CAMPO OPCIONAL;
+          int(6)
+        example: 10000
+  ComponenteBill:
+    type: object
+    properties:
+      appOrigem:
+        type: integer
+        description: |-
+          Origem da requisição.
+
+          CAMPO OBRIGATÓRIO;
+          int(1);
+        example: 1
+      idUsuario:
+        type: string
+        description: |-
+          Id Componente do portador.
+
+          CAMPO OBRIGATÓRIO;
+        example: '75620200930123048590001'
+      tipoConta:
+        type: integer
+        format: int32
+        description: |-
+          Tipo de conta:
+          -  0 - Indefinido;
+          -  1 - Crédito;
+          -  3 - Multiplo;
+            
+          CAMPO OBRIGATÓRIO;
+          int(1)
+        example: 1
+      vencimento:
+        type: string
+        description: |-
+          Data de vencimento da fatura.
+
+          CAMPO OPCIONAL;
+          Long(12);
+        example: 19/07/2022
+      timeout:
+        type: integer
+        format: int32
+        description: |-
+          Tempo maximo de resposta do serviço.
+
+          CAMPO OPCIONAL;
+          int(6)
+        example: 10000
+  InvoiceGenerated:
+    type: object
+    properties:
+      idUsuario:
+        type: string
+        description: Id Componente do portador.
+        example: '75620200930123048590001'
+      mensagemRetorno:
+        type: string
+        description: Mensagem de retorno do serviço.
+        example: Sucesso
+      codRetorno:
+        type: integer
+        description: Codigo de retorno.
+        example: 200
+      fatura:
+        type: string
+        description: Array de bytes da fatura.
+        example: JVBERi0xLjQKJeLjz9MKMyAwIG9iago8PC9Db2xvclNwYWNlL0RldmljZUdyYXkvU3VidHlwZS9JbWFnZS9IZWlnaH...
+      boleto:
+        type: string
+        description: Array de bytes do boleto.
+        example: null
+      valorPagtoMin:
+        type: number
+        description: Valor para pagamento minímo.
+        example: 125
+      valorPagtoTotal:
+        type: number
+        description: Array de bytes do boleto.
+        example: 833.33
+      nomePortador:
+        type: number
+        description: Valor para pagamento minímo.
+        example: José de Souza
+      possuiBoleto:
+        type: string
+        description: Indica se a fatura possui boleto.
+        example: false
+  ComponentNotFound:
+    type: object
+    properties:
+      idUsuario:
+        type: string
+        description: Id Componente do portador.
+        example: '75620200930123048590001'
+      mensagemRetorno:
+        type: string
+        description: Mensagem de retorno do serviço.
+        example: ID do usuário inexistente
+      codRetorno:
+        type: integer
+        description: Codigo de retorno.
+        example: 440
+      fatura:
+        type: string
+        description: Array de bytes da fatura.
+        example: null
+      boleto:
+        type: string
+        description: Array de bytes do boleto.
+        example: null
+      valorPagtoMin:
+        type: number
+        description: Valor para pagamento minímo.
+        example: null
+      valorPagtoTotal:
+        type: number
+        description: Array de bytes do boleto.
+        example: null
+      nomePortador:
+        type: number
+        description: Valor para pagamento minímo.
+        example: null
+      possuiBoleto:
+        type: string
+        description: Indica se a fatura possui boleto.
+        example: false
+  InvoiceNotFound:
+    type: object
+    properties:
+      idUsuario:
+        type: string
+        description: Id Componente do portador.
+        example: '75620200930123048590001'
+      mensagemRetorno:
+        type: string
+        description: Mensagem de retorno do serviço.
+        example: Não existe fatura disponível para o vencimento.
+      codRetorno:
+        type: integer
+        description: Codigo de retorno.
+        example: 440
+      fatura:
+        type: string
+        description: Array de bytes da fatura.
+        example: null
+      boleto:
+        type: string
+        description: Array de bytes do boleto.
+        example: null
+      valorPagtoMin:
+        type: number
+        description: Valor para pagamento minímo.
+        example: null
+      valorPagtoTotal:
+        type: number
+        description: Array de bytes do boleto.
+        example: null
+      nomePortador:
+        type: number
+        description: Valor para pagamento minímo.
+        example: null
+      possuiBoleto:
+        type: string
+        description: Indica se a fatura possui boleto.
+        example: false
+  BarCodeGenerated:
+    type: object
+    properties:
+      idUsuario:
+        type: string
+        description: Id Componente do portador.
+        example: '75620200930123048590001'
+      mensagemRetorno:
+        type: string
+        description: Mensagem de retorno do serviço.
+        example: Sucesso
+      codRetorno:
+        type: integer
+        description: Codigo de retorno.
+        example: 200
+      codigoDeBarras:
+        type: string
+        description: Código de barras.
+        example: '75694000000000000006000103000283396444183514'
+      linhaDigitavel:
+        type: string
+        description: Linha Digitavel.
+        example: '75696.00013 03000.283394 64441.835143 4 00000000000000      '
+  BarCodeIdNotFound:
+    type: object
+    properties:
+      idUsuario:
+        type: string
+        description: Id Componente do portador.
+        example: '75620200930123048590001'
+      mensagemRetorno:
+        type: string
+        description: Mensagem de retorno do serviço.
+        example: ID do usuário inexistente
+      codRetorno:
+        type: integer
+        description: Codigo de retorno.
+        example: 440
+      codigoDeBarras:
+        type: string
+        description: Código de barras.
+        example: null
+      linhaDigitavel:
+        type: string
+        description: Linha Digitavel.
+        example: null
+  BarCodeDueNotFound:
+    type: object
+    properties:
+      idUsuario:
+        type: string
+        description: Id Componente do portador.
+        example: '75620200930123048590001'
+      mensagemRetorno:
+        type: string
+        description: Mensagem de retorno do serviço.
+        example: Nâo existe linha digitavel disponivel para este periodo(202207)
+      codRetorno:
+        type: integer
+        description: Codigo de retorno.
+        example: 440
+      codigoDeBarras:
+        type: string
+        description: Código de barras.
+        example: null
+      linhaDigitavel:
+        type: string
+        description: Linha Digitavel.
+        example: null
+  BillGenerated:
+    type: object
+    properties:
+      idUsuario:
+        type: string
+        description: Id Componente do portador.
+        example: '75620200930123048590001'
+      mensagemRetorno:
+        type: string
+        description: Mensagem de retorno do serviço.
+        example: Sucesso
+      codRetorno:
+        type: integer
+        description: Codigo de retorno.
+        example: 200
+      boleto:
+        type: string
+        description: Array de bytes do boleto.
+        example: JVBERi0xLjQKJeLjz9MKMyAwIG9iago8PC9Db2xvclNwYWNlL0RldmljZUdyYXkvU3VidHlwZS9JbWFnZS9IZWlnaH...
+  BillIdNotFound:
+    type: object
+    properties:
+      idUsuario:
+        type: string
+        description: Id Componente do portador.
+        example: '75620200930123048590001'
+      mensagemRetorno:
+        type: string
+        description: Mensagem de retorno do serviço.
+        example: ID do usuário inexistente
+      codRetorno:
+        type: integer
+        description: Codigo de retorno.
+        example: 440
+      boleto:
+        type: string
+        description: Boleto.
+        example: null
+  ApiError500:
+    type: object
+    properties:
+      idUsuario:
+        type: string
+        example: null
+      mensagemRetorno:
+        type: string
+        example: 'Serviço temporariamente indisponível. '
+      codRetorno:
+        type: integer
+        example: 500
+    title: ApiError500
+paths:
+  /gerarFaturaPDF:
+    post:
+      tags:
+        - Faturas
+      summary: Retorna a fatura do portador em um array de bytes.
+      description: Retorna a fatura do portador em um array de bytes..
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: Invoice
+          description: Dados utilizados para obter a fatura do portador.
+          required: true
+          schema:
+            $ref: '#/definitions/Componente'
+      responses:
+        '200':
+          description: Fatura retornada com sucesso.
+          schema:
+            $ref: '#/definitions/InvoiceGenerated'
+        '400':
+          description: Possíveis erros de negócio.
+          schema:
+            $ref: '#/definitions/ComponentNotFound'
+        '440':
+          description: Não autorizado.
+          schema:
+            $ref: '#/definitions/InvoiceNotFound'
+        '500':
+          description: Erro interno.
+          schema:
+            $ref: '#/definitions/ApiError500'
+  /gerarLinhaDigitavel:
+    get:
+      tags:
+        - Faturas
+      summary: Retorna o código de barras e a linha digitável para pagamento.
+      description: Retorna o código de barras e a linha digitável para pagamento
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: appOrigem
+          description: Identificador da origem da requisição.
+          type: string
+        - in: query
+          name: idUsuario
+          description: Número de componente do conta.
+          type: string
+        - in: query
+          name: vencimento
+          description: Data de vencimento da conta
+          type: string
+        - in: query
+          name: timeout
+          description: Tempo de resposta da requisição
+          type: string
+        - in: query
+          type: number
+          name: tipoConta
+          description: Tipo da conta 0 - Indefinido, 1 - Crédito, 2 - Multiplo
+      responses:
+        '200':
+          description: Código de barras e linha digitavel retornado com sucesso.
+          schema:
+            $ref: '#/definitions/BarCodeGenerated'
+        '400':
+          description: Possíveis erros de negócio.
+          schema:
+            $ref: '#/definitions/BarCodeIdNotFound'
+        '401':
+          description: Não autorizado.
+          schema:
+            $ref: '#/definitions/BarCodeDueNotFound'
+        '500':
+          description: Erro interno.
+          schema:
+            $ref: '#/definitions/ApiError500'
+  /gerarBoletoFaturaPDF:
+    post:
+      tags:
+        - Faturas
+      summary: Retorna o boleto do portador para a última fatura fechada e retorna um array de bytes.
+      description: Retorna o boleto da última fatura do portador em um array de bytes.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: Invoice
+          description: Dados utilizados para obter o boleto do portador.
+          required: true
+          schema:
+            $ref: '#/definitions/ComponenteBill'
+      responses:
+        '200':
+          description: Boleto retornada com sucesso.
+          schema:
+            $ref: '#/definitions/BillGenerated'
+        '440':
+          description: Possíveis erros de negócio.
+          schema:
+            $ref: '#/definitions/BillIdNotFound'
+        '500':
+          description: Erro interno.
+          schema:
+            $ref: '#/definitions/ApiError500'
+host: apicv10-homol.homologacao.com.br
